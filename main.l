@@ -3,7 +3,11 @@
 %{
 /*−−−−−−−−−−−−−−−−−−−−−−−−−− Definitions −−−−−−−−−−−−−−−−−−−−−−−−−−*/
 #include<stdio.h>
-#define MAX_SIZE 100
+#define MAX_SIZE 3
+
+void coluna_comentario_multilinha();
+int inserir_tabela(char *lexema);
+int procurar_tabela(char *lexema);
 
 typedef enum{
     IF,
@@ -35,9 +39,6 @@ comentario_multiplas_linhas "/*"([^*]|(\*)+([^*/]))*(\*)+\/
 ws {delim}+
 other .
 
-
-void inserir_tabela(char *lexema);
-int procurar_tabela(char *lexema);
 
 
 %%
@@ -79,8 +80,7 @@ int procurar_tabela(char *lexema);
 "}"             { fprintf(yyout,"%d(%d): - (ahc)\n", yylineno,column_number); column_number+=yyleng; }
 
 {declaracao}    { fprintf(yyout,"%d(%d): %s (DECLARACAO)\n", yylineno,column_number,yytext); column_number+=yyleng; }
-{id}            { int algo = inserir_tabela(yytext); if(algo == -1) fprintf(yyout, "Erro: máximo de ids atingios na linha %d e coluna %d. Input -> \"%s\"\n", yylineno, column_number, yytext); fprintf(yyout,"%d(%d): %s (ID%d)\n", yylineno,column_number,yytext,
-                if(algo==-1)); column_number+=yyleng; }
+{id}            { int algo = inserir_tabela(yytext); if(algo == -1) fprintf(yyout, "Erro: máximo de ids atingios na linha %d e coluna %d. Input -> \"%s\"\n", yylineno, column_number, yytext);else fprintf(yyout,"%d(%d): %s (ID%d)\n", yylineno,column_number,yytext,algo); column_number+=yyleng; }
 {number}        { fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; }
 \n              { column_number = 1; }
 {ws}            { column_number += yyleng; }
@@ -126,11 +126,29 @@ int inserir_tabela(char *lexema){
     }
 }
 
+void imprimirTabelaSimbolos() {
+    printf("\n===== TABELA DE SIMBOLOS =====\n");
+    printf("%-5s | %-30s\n", "ID", "LEXEMA");
+    printf("--------------------------------------\n");
+
+    for (int i = 0; i < posicao; i++) {
+        printf("%-5d | %-30s\n", i, tabela_simbolo[i].lexema);
+    }
+
+    printf("--------------------------------------\n");
+}
+
 
 int main(int argc, char *argv[]){
     yyin = fopen(argv[1], "r");
     yyout=stdout;
     yylex();
     fclose(yyin);
+    imprimirTabelaSimbolos();
     return 0;
 }
+
+/*
+Arrumar o nome das variáveis
+A impressão dos símbolos na tela
+*/
