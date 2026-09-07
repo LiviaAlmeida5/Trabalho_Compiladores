@@ -79,7 +79,7 @@ int procurar_tabela(char *lexema);
 "}"             { fprintf(yyout,"%d(%d): - (ahc)\n", yylineno,column_number); column_number+=yyleng; }
 
 {declaracao}    { fprintf(yyout,"%d(%d): %s (DECLARACAO)\n", yylineno,column_number,yytext); column_number+=yyleng; }
-{id}            { int algo = inserir_tabela(yytext); fprintf(yyout,"%d(%d): %s (ID%d)\n", yylineno,column_number,yytext,
+{id}            { int algo = inserir_tabela(yytext); if(algo == -1) fprintf(yyout, "Erro: máximo de ids atingios na linha %d e coluna %d. Input -> \"%s\"\n", yylineno, column_number, yytext); fprintf(yyout,"%d(%d): %s (ID%d)\n", yylineno,column_number,yytext,
                 if(algo==-1)); column_number+=yyleng; }
 {number}        { fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; }
 \n              { column_number = 1; }
