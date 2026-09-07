@@ -1,0 +1,113 @@
+/* Teste 01
+comentario simples
+com varias linhas
+*/
+
+/* Teste 02
+comentario com / dentro
+e mais / / / barras
+*/
+
+/* Teste 03
+comentario com * dentro
+e outro * asterisco
+*/
+
+/* Teste 04
+varios asteriscos separados
+* texto * texto * texto *
+*/
+
+/* Teste 05
+varias barras separadas
+/ texto / texto / texto /
+*/
+
+/* Teste 06
+misturando barras e asteriscos
+/ texto * texto / texto *
+*/
+
+/* Teste 07
+asteriscos consecutivos
+** texto ** texto **
+*/
+
+/* Teste 08
+muitos asteriscos
+***** texto ******** texto *****
+*/
+
+/* Teste 09
+barra seguida de asterisco
+/ * texto / * texto
+*/
+
+/* Teste 10
+asterisco e barra separados
+* texto / texto * texto /
+*/
+
+/* Teste 11
+comentario terminando com dois asteriscos
+**/
+
+/* Teste 12
+comentario terminando com tres asteriscos
+***/
+
+/* Teste 13
+comentario terminando com muitos asteriscos
+******/
+
+/* Teste 14
+muitos asteriscos antes do fechamento
+texto
+****************/
+
+/* Teste 15
+barras antes de texto
+///////
+texto
+///////
+*/
+
+/* Teste 16
+mistura mais complexa
+//// texto
+**** texto
+// // texto
+** ** texto
+*/
+
+/* Teste 17
+simbolos misturados
+/ / * * / / ** // *** texto
+*/
+
+/* Teste 18
+asteriscos no inicio das linhas
+* primeira
+** segunda
+*** terceira
+**** quarta
+*/
+
+/* Teste 19
+barras no inicio das linhas
+/ primeira
+// segunda
+/// terceira
+//// quarta
+*/
+
+/* Teste 20
+teste final
+/ / / /
+* * * *
+/////
+*****
+texto no final
+***/ abc anfg abc kei
+dfk
+ef
