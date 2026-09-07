@@ -3,6 +3,25 @@
 %{
 /*−−−−−−−−−−−−−−−−−−−−−−−−−− Definitions −−−−−−−−−−−−−−−−−−−−−−−−−−*/
 #include<stdio.h>
+#define MAX_SIZE 100;
+
+typedef enum{
+    IF,
+    WHILE,
+    ELSE,
+    PRINT,
+    READ,
+    ID,
+
+}
+
+typedef struct{
+    int token;
+    char lexema[100]; 
+} Simbolo;
+
+Simbolo tabela_simbolo[MAX_SIZE];
+int posicao = 0;
 
 int column_number = 1;
 %}
@@ -14,7 +33,7 @@ declaracao "int"|"float"
 number [-|+]?{digit}+(\.{digit}+)?
 id {letter}({letter}|{digit})*
 comentario_uma_linha "//"([^\n])*
-comentario_multiplas_linhas "/*"([^*])*\*\/
+comentario_multiplas_linhas "/*"([^*]|(\*)+([^*/]))*(\*)+\/
 ws {delim}+
 other .
 
@@ -69,6 +88,9 @@ column_number+=yyleng;}
 
 %%
 /*−−−−−−−−−−−−−−−−−−−−−−−− User subrotines −−−−−−−−−−−−−−−−−−−−−−−−*/
+
+
+
 int main(int argc, char *argv[]){
     yyin = fopen(argv[1], "r");
     yyout=stdout;
