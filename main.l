@@ -1,7 +1,7 @@
 %option noyywrap yylineno
 
 %{
-/*−−−−−−−−−−−−−−−−−−−−−−−−−− Definitions −−−−−−−−−−−−−−−−−−−−−−−−−−*/
+/*−−−−−−−−−−−−−−−−−−−−−−−−−− Definições −−−−−−−−−−−−−−−−−−−−−−−−−−*/
 #include<stdio.h>
 #define MAX_IDS 100000
 #define MAX_TAMANHO_ID 100
@@ -36,11 +36,21 @@ other .
 
 %%
 %{
-/*−−−−−−−−−−−−−−−−−−−−−−−−−−−−− Rules −−−−−−−−−−−−−−−−−−−−−−−−−−−−−*/
+/*−−−−−−−−−−−−−−−−−−−−−−−−−−−−− Regras −−−−−−−−−−−−−−−−−−−−−−−−−−−−−*/
 %}
 
 {comentario_multiplas_linhas}   { coluna_comentario_multilinha();}
-{comentario_multiplas_linhas_sem_fechamento}   { fprintf(yyout, "Erro: comentário multilinha sem fechamento na linha %d e coluna %d\n", yylineno, column_number);}
+{comentario_multiplas_linhas_sem_fechamento}   {
+                                                    int linha_inicio = yylineno;
+
+                                                    for (int i = 0; i < yyleng; i++) {
+                                                        if (yytext[i] == '\n') {
+                                                            linha_inicio--;
+                                                        }
+                                                    }
+
+                                                    fprintf(yyout, "Erro: comentário de múltiplas linhas iniciado na linha %d e coluna %d não foi fechado.\n", linha_inicio,column_number);
+                                                }
 {comentario_uma_linha}          {   }
 
 "if"            { print_token(yylineno, column_number, yytext, "<IF>"); column_number += yyleng; } // IF
@@ -83,7 +93,7 @@ other .
                     if (valor_token_id == -1) {
                         fprintf(yyout, "Erro: número máximo de IDs atingido (%d) na linha %d e coluna %d. Entrada -> \"%s\"\n", MAX_IDS, yylineno, column_number, yytext);
                     } else if(valor_token_id == -2) {
-                        fprintf(yyout, "Erro: o identificador excede o limite de %d caracteres (%d) na linha %d e coluna %d. Entrada -> \"%s\"\n", MAX_TAMANHO_ID, yylineno, column_number, yytext);
+                        fprintf(yyout, "Erro: o identificador excede o limite de %d caracteres na linha %d e coluna %d. Entrada -> \"%s\"\n", MAX_TAMANHO_ID, yylineno, column_number, yytext);
                     }
                     else {
                         snprintf(token, sizeof(token), "<ID, %d>", valor_token_id);
@@ -101,10 +111,10 @@ other .
 \n              { column_number = 1; }
 {ws}            { column_number += yyleng; }
 
-{other}         {fprintf(yyout, "Erro léxico na linha %d e coluna %d. Input -> \"%s\"\n", yylineno, column_number, yytext); column_number+=yyleng;}
+{other}         {fprintf(yyout, "Erro léxico na linha %d e coluna %d. Entrada -> \"%s\"\n", yylineno, column_number, yytext); column_number+=yyleng;}
 
 %%
-/*−−−−−−−−−−−−−−−−−−−−−−−− User subrotines −−−−−−−−−−−−−−−−−−−−−−−−*/
+/*−−−−−−−−−−−−−−−−−−−−−−−− Funções auxiliares −−−−−−−−−−−−−−−−−−−−−−−−*/
 
 void coluna_comentario_multilinha(){
     for(int i=0; i<yyleng; i++){
@@ -160,8 +170,3 @@ int main(int argc, char *argv[]){
     imprimir_tabela_simbolos();
     return 0;
 }
-
-/*
-Arrumar o nome das variáveis
-A impressão dos símbolos na tela
-*/
