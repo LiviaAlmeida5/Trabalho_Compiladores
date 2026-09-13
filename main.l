@@ -3,7 +3,8 @@
 %{
 /*−−−−−−−−−−−−−−−−−−−−−−−−−− Definitions −−−−−−−−−−−−−−−−−−−−−−−−−−*/
 #include<stdio.h>
-#define MAX_SIZE 100000
+#define MAX_IDS 100000
+#define MAX_TAMANHO_ID 100
 
 void coluna_comentario_multilinha();
 int inserir_tabela(char *lexema);
@@ -11,10 +12,10 @@ int procurar_tabela(char *lexema);
 void print_token(int numero_linha, int numero_coluna, char * lexema, char *token);
 
 typedef struct{
-    char lexema[100]; 
+    char lexema[MAX_TAMANHO_ID + 1]; 
 } Simbolo;
 
-Simbolo tabela_simbolo[MAX_SIZE];
+Simbolo tabela_simbolo[MAX_IDS];
 int posicao = 0;
 
 int column_number = 1;
@@ -22,12 +23,12 @@ int column_number = 1;
 
 digit [0-9]
 letter [A-Za-z]
-delim [ \t\n]
-declaracao "int"|"float"
+delim [ \t]
 number {digit}+(\.{digit}+)?
 id {letter}({letter}|{digit})*
 comentario_uma_linha "//"([^\n])*
 comentario_multiplas_linhas "/*"([^*]|(\*)+([^*/]))*(\*)+\/
+comentario_multiplas_linhas_sem_fechamento "/*"([^*]|(\*)+([^*/]))*(\*)*
 ws {delim}+
 other .
 
@@ -39,48 +40,68 @@ other .
 %}
 
 {comentario_multiplas_linhas}   { coluna_comentario_multilinha();}
+{comentario_multiplas_linhas_sem_fechamento}   { fprintf(yyout, "Erro: comentário multilinha sem fechamento na linha %d e coluna %d\n", yylineno, column_number);}
 {comentario_uma_linha}          {   }
 
-"if"            { fprintf(yyout,"%d(%d): if (IF)\n", yylineno,column_number); column_number+=yyleng; } // IF
-"else"          { fprintf(yyout,"%d(%d): else (ELSE)\n", yylineno,column_number); column_number+=yyleng; } // ELSE
-"while"         { fprintf(yyout,"%d(%d): while (WHILE)\n", yylineno,column_number); column_number+=yyleng; } // WHILE
-"print"         { fprintf(yyout,"%d(%d): print (PRINT)\n", yylineno,column_number); column_number+=yyleng; } // PRINT
-"read"          { fprintf(yyout,"%d(%d): read (READ)\n", yylineno,column_number); column_number+=yyleng; } // READ
+"if"            { print_token(yylineno, column_number, yytext, "<IF>"); column_number += yyleng; } // IF
+"else"          { print_token(yylineno, column_number, yytext, "<ELSE>"); column_number += yyleng; } // ELSE
+"while"         { print_token(yylineno, column_number, yytext, "<WHILE>"); column_number += yyleng; } // WHILE
+"print"         { print_token(yylineno, column_number, yytext, "<PRINT>"); column_number += yyleng; } // PRINT
+"read"          { print_token(yylineno, column_number, yytext, "<READ>"); column_number += yyleng; } // READ
 
-"int"           { fprintf(yyout,"%d(%d): int (INT)\n", yylineno,column_number); column_number+=yyleng; } // INT
-"float"         { fprintf(yyout,"%d(%d): if (IF)\n", yylineno,column_number); column_number+=yyleng; } // FLOAT
+"int"           { print_token(yylineno, column_number, yytext, "<INT>"); column_number += yyleng; } // INT
+"float"         { print_token(yylineno, column_number, yytext, "<FLOAT>"); column_number += yyleng; } // FLOAT
 
-"+"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MAIS
-"-"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MENOS
-"*"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MULT
-"/"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // DIV
-"%"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MOD
+"+"             { print_token(yylineno, column_number, yytext, "<MAIS>"); column_number += yyleng; } // MAIS
+"-"             { print_token(yylineno, column_number, yytext, "<MENOS>"); column_number += yyleng; } // MENOS
+"*"             { print_token(yylineno, column_number, yytext, "<MULT>"); column_number += yyleng; } // MULT
+"/"             { print_token(yylineno, column_number, yytext, "<DIV>"); column_number += yyleng; } // DIV
+"%"             { print_token(yylineno, column_number, yytext, "<MOD>"); column_number += yyleng; } // MOD
 
-"<="            { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MAIOR_IGUAL
-">="            { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MENOR_IGUAL
-"<"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MENOR
-">"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // MAIOR
-"=="            { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // IGUAL
-"<>"            { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // DIFERENTE
+"<="            { print_token(yylineno, column_number, yytext, "<MENOR_IGUAL>"); column_number += yyleng; } // MENOR_IGUAL
+">="            { print_token(yylineno, column_number, yytext, "<MAIOR_IGUAL>"); column_number += yyleng; } // MAIOR_IGUAL
+"=="            { print_token(yylineno, column_number, yytext, "<IGUAL>"); column_number += yyleng; } // IGUAL
+"<>"            { print_token(yylineno, column_number, yytext, "<DIFERENTE>"); column_number += yyleng; } // DIFERENTE
+"<"             { print_token(yylineno, column_number, yytext, "<MENOR>"); column_number += yyleng; } // MENOR
+">"             { print_token(yylineno, column_number, yytext, "<MAIOR>"); column_number += yyleng; } // MAIOR
 
-"||"            { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // E
-"&&"            { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // OU
-"!"             { fprintf(yyout,"%d(%d): : (;)\n", yylineno,column_number); column_number+=yyleng; } // NAO
+"&&"            { print_token(yylineno, column_number, yytext, "<E>"); column_number += yyleng; } // E
+"||"            { print_token(yylineno, column_number, yytext, "<OU>"); column_number += yyleng; } // OU
+"!"             { print_token(yylineno, column_number, yytext, "<NAO>"); column_number += yyleng; } // NAO
 
-";"             { fprintf(yyout,"%d(%d): ; (;)\n", yylineno,column_number); column_number+=yyleng; } // PONTO_VIRGULA
-","             { fprintf(yyout,"%d(%d): , (,)\n", yylineno,column_number); column_number+=yyleng; } // VIRGULA
-"("             { fprintf(yyout,"%d(%d): - (par)\n", yylineno,column_number); column_number+=yyleng; } // ABRE_PARENTESES
-")"             { fprintf(yyout,"%d(%d): - (rap)\n", yylineno,column_number); column_number+=yyleng; } // FECHA_PARENTESES
-"{"             { fprintf(yyout,"%d(%d): - (cha)\n", yylineno,column_number); column_number+=yyleng; } // ABRE_CHAVES
-"}"             { fprintf(yyout,"%d(%d): - (ahc)\n", yylineno,column_number); column_number+=yyleng; } // FECHA_CHAVES
+";"             { print_token(yylineno, column_number, yytext, "<PONTO_VIRGULA>"); column_number += yyleng; } // PONTO_VIRGULA
+","             { print_token(yylineno, column_number, yytext, "<VIRGULA>"); column_number += yyleng; } // VIRGULA
+"("             { print_token(yylineno, column_number, yytext, "<ABRE_PARENTESES>"); column_number += yyleng; } // ABRE_PARENTESES
+")"             { print_token(yylineno, column_number, yytext, "<FECHA_PARENTESES>"); column_number += yyleng; } // FECHA_PARENTESES
+"{"             { print_token(yylineno, column_number, yytext, "<ABRE_CHAVES>"); column_number += yyleng; } // ABRE_CHAVES
+"}"             { print_token(yylineno, column_number, yytext, "<FECHA_CHAVES>"); column_number += yyleng; } // FECHA_CHAVES
 
-{declaracao}    { fprintf(yyout,"%d(%d): %s (DECLARACAO)\n", yylineno,column_number,yytext); column_number+=yyleng; }
-{id}            { int algo = inserir_tabela(yytext); char texto[50]; snprintf(texto, sizeof(texto), "<ID, %d>", algo); if(algo == -1) fprintf(yyout, "Erro: máximo de ids atingios na linha %d e coluna %d. Input -> \"%s\"\n", yylineno, column_number, yytext); algoelse print_lexema(yylineno, column_number, yytext, texto); column_number+=yyleng; }
-{number}        { fprintf(yyout,"%d(%d): %s (NUMBER)\n", yylineno,column_number,yytext); column_number+=yyleng; } <NUMBER, 1.7>
+{id}            {
+                    int valor_token_id = inserir_tabela(yytext);
+                    char token[50];
+
+                    if (valor_token_id == -1) {
+                        fprintf(yyout, "Erro: número máximo de IDs atingido (%d) na linha %d e coluna %d. Entrada -> \"%s\"\n", MAX_IDS, yylineno, column_number, yytext);
+                    } else if(valor_token_id == -2) {
+                        fprintf(yyout, "Erro: o identificador excede o limite de %d caracteres (%d) na linha %d e coluna %d. Entrada -> \"%s\"\n", MAX_TAMANHO_ID, yylineno, column_number, yytext);
+                    }
+                    else {
+                        snprintf(token, sizeof(token), "<ID, %d>", valor_token_id);
+                        print_token(yylineno, column_number, yytext, token);
+                    }
+                    column_number += yyleng;
+                } // ID
+{number}        {
+                    char token[50];
+
+                    snprintf(token, sizeof(token), "<NUMERO, %s>", yytext);
+                    print_token(yylineno, column_number, yytext, token);
+                    column_number += yyleng;
+                } // NUMERO
 \n              { column_number = 1; }
 {ws}            { column_number += yyleng; }
 
-{other}         {fprintf(yyout, "Lexical error on line %d and column %d. Input -> \"%s\"\n", yylineno, column_number, yytext); column_number+=yyleng;}
+{other}         {fprintf(yyout, "Erro léxico na linha %d e coluna %d. Input -> \"%s\"\n", yylineno, column_number, yytext); column_number+=yyleng;}
 
 %%
 /*−−−−−−−−−−−−−−−−−−−−−−−− User subrotines −−−−−−−−−−−−−−−−−−−−−−−−*/
@@ -99,33 +120,27 @@ void print_token(int numero_linha, int numero_coluna, char * lexema, char *token
     fprintf(yyout, "Linha: %d; Coluna: %d; Lexema: %s; Token: %s\n", numero_linha, numero_coluna, lexema, token);
 }
 
-int procurar_tabela(char *lexema){
+int inserir_tabela(char *lexema){
+   
     for(int i=0; i<posicao; i++){
         if(strcmp(tabela_simbolo[i].lexema, lexema) == 0){
             return i;
         }
     }
-    return -1;
-}
 
-int inserir_tabela(char *lexema){
-    int p = procurar_tabela(lexema);
-    
-    if(p == -1){
-        if(posicao>=MAX_SIZE){
-            return -1;
-        }
-        strncpy(tabela_simbolo[posicao].lexema, lexema, sizeof(tabela_simbolo[posicao].lexema) - 1);
-        tabela_simbolo[posicao].lexema[sizeof(tabela_simbolo[posicao].lexema) - 1] = '\0';
-        posicao++;
-        return posicao-1;
-    }else{
-        return p;
+    if(posicao>=MAX_IDS){
+        return -1;
     }
-}
 
-void imprimirTabelaSimbolos() {
-    printf("\n===== TABELA DE SIMBOLOS =====\n");
+    if(strlen(lexema) > MAX_TAMANHO_ID) return -2;
+
+    strncpy(tabela_simbolo[posicao].lexema, lexema, sizeof(tabela_simbolo[posicao].lexema) - 1);
+    tabela_simbolo[posicao].lexema[sizeof(tabela_simbolo[posicao].lexema) - 1] = '\0';
+    return posicao++;
+} 
+
+void imprimir_tabela_simbolos() {
+    printf("\n===== TABELA DE SÍMBOLOS =====\n");
     printf("%-5s | %-30s\n", "ID", "LEXEMA");
     printf("--------------------------------------\n");
 
@@ -142,7 +157,7 @@ int main(int argc, char *argv[]){
     yyout=stdout;
     yylex();
     fclose(yyin);
-    imprimirTabelaSimbolos();
+    imprimir_tabela_simbolos();
     return 0;
 }
 
