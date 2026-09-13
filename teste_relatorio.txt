@@ -1,0 +1,7 @@
+int float if else while print read
+id id1 0 1.5 -2
++ * / % <= >= == <> < > && || ! ; , ( ) { }
+// comentario
+/* comentario 
+   comentario 2*/
+@
