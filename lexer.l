@@ -34,7 +34,7 @@ delim [ \t]
 number {digit}+(\.{digit}+)?
 id {letter}({letter}|{digit})*
 
-/* Comentários válidos são ignorados; o segundo padrão detecta falta de fechamento. */
+/* Comentários válidos são ignorados; o terceiro padrão detecta falta de fechamento. */
 comentario_uma_linha "//"([^\n])*
 comentario_multiplas_linhas "/*"([^*]|(\*)+([^*/]))*(\*)+\/
 comentario_multiplas_linhas_sem_fechamento "/*"([^*]|(\*)+([^*/]))*(\*)*
@@ -69,7 +69,6 @@ other .
 "while"         { print_token(yylineno, column_number, yytext, "<WHILE>"); column_number += yyleng; } // WHILE
 "print"         { print_token(yylineno, column_number, yytext, "<PRINT>"); column_number += yyleng; } // PRINT
 "read"          { print_token(yylineno, column_number, yytext, "<READ>"); column_number += yyleng; } // READ
-
 
     /* Operadores aritméticos. */
 "+"             { print_token(yylineno, column_number, yytext, "<MAIS>"); column_number += yyleng; } // MAIS
@@ -130,7 +129,7 @@ other .
                     print_token(yylineno, column_number, yytext, token);
                     column_number += yyleng;
                 } // NUMERO
-                
+
     /* Espaços e tabulações avançam a coluna; nova linha a reinicia. */
 \n              { column_number = 1; }
 {ws}            { column_number += yyleng; }
