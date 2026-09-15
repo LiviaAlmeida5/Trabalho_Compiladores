@@ -106,6 +106,7 @@ other .
                     snprintf(token, sizeof(token), "<TIPO, %s>", yytext); 
                     print_token(yylineno, column_number, yytext, token); column_number += yyleng; 
                 } // TIPÓ
+
 {id}            {
                     int valor_token_id = inserir_tabela(yytext);
                     char token[50];
@@ -125,11 +126,11 @@ other .
 {number}        {
                     char token[50];
 
-                    /* O atributo numérico preserva o lexema reconhecido. */
                     snprintf(token, sizeof(token), "<NUMERO, %s>", yytext);
                     print_token(yylineno, column_number, yytext, token);
                     column_number += yyleng;
                 } // NUMERO
+                
     /* Espaços e tabulações avançam a coluna; nova linha a reinicia. */
 \n              { column_number = 1; }
 {ws}            { column_number += yyleng; }
