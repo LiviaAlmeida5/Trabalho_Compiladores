@@ -26,6 +26,8 @@ int column_number = 1;
 %}
 
 /* Classes básicas de lexemas. */
+tipo "int"|"float"
+relop "<="|">="|"=="|"<>"|"<"|">"
 digit [0-9]
 letter [A-Za-z]
 delim [ \t]
@@ -68,8 +70,6 @@ other .
 "print"         { print_token(yylineno, column_number, yytext, "<PRINT>"); column_number += yyleng; } // PRINT
 "read"          { print_token(yylineno, column_number, yytext, "<READ>"); column_number += yyleng; } // READ
 
-"int"           { print_token(yylineno, column_number, yytext, "<INT>"); column_number += yyleng; } // INT
-"float"         { print_token(yylineno, column_number, yytext, "<FLOAT>"); column_number += yyleng; } // FLOAT
 
     /* Operadores aritméticos. */
 "+"             { print_token(yylineno, column_number, yytext, "<MAIS>"); column_number += yyleng; } // MAIS
@@ -77,14 +77,6 @@ other .
 "*"             { print_token(yylineno, column_number, yytext, "<MULT>"); column_number += yyleng; } // MULT
 "/"             { print_token(yylineno, column_number, yytext, "<DIV>"); column_number += yyleng; } // DIV
 "%"             { print_token(yylineno, column_number, yytext, "<MOD>"); column_number += yyleng; } // MOD
-
-    /* Operadores relacionais. As formas com dois caracteres vêm antes das simples. */
-"<="            { print_token(yylineno, column_number, yytext, "<MENOR_IGUAL>"); column_number += yyleng; } // MENOR_IGUAL
-">="            { print_token(yylineno, column_number, yytext, "<MAIOR_IGUAL>"); column_number += yyleng; } // MAIOR_IGUAL
-"=="            { print_token(yylineno, column_number, yytext, "<IGUAL>"); column_number += yyleng; } // IGUAL
-"<>"            { print_token(yylineno, column_number, yytext, "<DIFERENTE>"); column_number += yyleng; } // DIFERENTE
-"<"             { print_token(yylineno, column_number, yytext, "<MENOR>"); column_number += yyleng; } // MENOR
-">"             { print_token(yylineno, column_number, yytext, "<MAIOR>"); column_number += yyleng; } // MAIOR
 
     /* Operadores lógicos. */
 "&&"            { print_token(yylineno, column_number, yytext, "<E>"); column_number += yyleng; } // E
@@ -99,6 +91,21 @@ other .
 "{"             { print_token(yylineno, column_number, yytext, "<ABRE_CHAVES>"); column_number += yyleng; } // ABRE_CHAVES
 "}"             { print_token(yylineno, column_number, yytext, "<FECHA_CHAVES>"); column_number += yyleng; } // FECHA_CHAVES
 
+    /* Operadores relacionais.*/
+{relop}         {
+                    char token[50];
+
+                    snprintf(token, sizeof(token), "<RELOP, %s >", yytext); 
+                    print_token(yylineno, column_number, yytext, token); column_number += yyleng; 
+                } // RELOP
+
+    /* Tipos da linguagem.*/
+{tipo}          {
+                    char token[50];
+
+                    snprintf(token, sizeof(token), "<TIPO, %s>", yytext); 
+                    print_token(yylineno, column_number, yytext, token); column_number += yyleng; 
+                } // TIPÓ
 {id}            {
                     int valor_token_id = inserir_tabela(yytext);
                     char token[50];
@@ -114,7 +121,7 @@ other .
                         print_token(yylineno, column_number, yytext, token);
                     }
                     column_number += yyleng;
-                } // ID
+                } // ID             
 {number}        {
                     char token[50];
 
