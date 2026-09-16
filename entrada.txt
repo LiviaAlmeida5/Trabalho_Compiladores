@@ -1,7 +1,0 @@
-int float if else while print read
-id id1 0.546 13.5 -26
-+ * / % <= >= == <> < > && || ! ; , ( ) { }
-// comentario
-/* comentario 
-   comentario 2*/
-@
