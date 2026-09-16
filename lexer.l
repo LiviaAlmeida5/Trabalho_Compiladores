@@ -77,6 +77,9 @@ other .
 "/"             { print_token(yylineno, column_number, yytext, "<DIV>"); column_number += yyleng; } // DIV
 "%"             { print_token(yylineno, column_number, yytext, "<MOD>"); column_number += yyleng; } // MOD
 
+    /* Operador de atribuição. */
+"="             { print_token(yylineno, column_number, yytext, "<ATRIBUICAO>"); column_number += yyleng; } // ATRIBUICAO        
+ 
     /* Operadores lógicos. */
 "&&"            { print_token(yylineno, column_number, yytext, "<E>"); column_number += yyleng; } // E
 "||"            { print_token(yylineno, column_number, yytext, "<OU>"); column_number += yyleng; } // OU
