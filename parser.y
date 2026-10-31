@@ -15,18 +15,19 @@ extern void imprimir_tabela_simbolos(void);
 int houve_erro_sintatico = 0;
 %}
 
-/* Tokens com nomes em português e abreviados. */
-%token TIP ID NUM
-%token SE SEN ENQ IMP LER
-%token MAIS MENOS MULT DIV MOD ATR
-%token OP_REL E_LOG OU_LOG NAO
-%token P_VIRG VIRG A_PAR F_PAR A_CH F_CH
+/* Tokens */
+%token TIPO ID NUMERO
+%token IF ELSE WHILE PRINT READ
+%token MAIS MENOS MULT DIV MOD ATRIBUICAO
+%token RELOP E OU NAO
+%token PONTO_VIRGULA VIRGULA ABRE_PARENTESES FECHA_PARENTESES
+%token ABRE_CHAVES FECHA_CHAVES
 %token ERRO_LEX
 
 /* Precedência crescente e associatividade dos operadores. */
-%left OU_LOG
-%left E_LOG
-%left OP_REL
+%left OU
+%left E
+%left RELOP
 %left MAIS MENOS
 %left MULT DIV MOD
 %right NAO MENOS_UN
@@ -45,7 +46,7 @@ lista_itens
     : /* vazio */
     | lista_itens item
     /* Recupera comandos e declarações até o próximo ponto e vírgula. */
-    | lista_itens error P_VIRG
+    | lista_itens error PONTO_VIRGULA
       {
           yyerrok;
       }
@@ -58,18 +59,18 @@ item
 
 /* Declarações admitem um ou mais identificadores do mesmo tipo. */
 declaracao
-    : TIP lista_declaradores P_VIRG
+    : TIPO lista_declaradores PONTO_VIRGULA
     ;
 
 lista_declaradores
     : declarador
-    | lista_declaradores VIRG declarador
+    | lista_declaradores VIRGULA declarador
     ;
 
 /* A inicialização na declaração é reconhecida somente sintaticamente. */
 declarador
     : ID
-    | ID ATR expressao
+    | ID ATRIBUICAO expressao
     ;
 
 comando
@@ -82,7 +83,7 @@ comando
     ;
 
 atribuicao
-    : ID ATR expressao P_VIRG
+    : ID ATRIBUICAO expressao PONTO_VIRGULA
     ;
 
 /*
@@ -91,27 +92,27 @@ atribuicao
  * aparece imediatamente antes de seu bloco.
  */
 condicional
-    : SE A_PAR expressao F_PAR bloco
-    | SE A_PAR expressao F_PAR bloco SEN bloco
+    : IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco
+    | IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco ELSE bloco
     ;
 
 repeticao
-    : ENQ A_PAR expressao F_PAR bloco
+    : WHILE ABRE_PARENTESES expressao FECHA_PARENTESES bloco
     ;
 
 /* print e read são as funções predefinidas de saída e entrada. */
 impressao
-    : IMP A_PAR expressao F_PAR P_VIRG
+    : PRINT ABRE_PARENTESES expressao FECHA_PARENTESES PONTO_VIRGULA
     ;
 
 leitura
-    : LER A_PAR ID F_PAR P_VIRG
+    : READ ABRE_PARENTESES ID FECHA_PARENTESES PONTO_VIRGULA
     ;
 
 bloco
-    : A_CH lista_itens F_CH
+    : ABRE_CHAVES lista_itens FECHA_CHAVES
     /* Em um bloco, também é possível sincronizar diretamente em '}'. */
-    | A_CH lista_itens error F_CH
+    | ABRE_CHAVES lista_itens error FECHA_CHAVES
       {
           yyerrok;
       }
@@ -123,9 +124,9 @@ bloco
  * MENOS_UN distingue o sinal negativo da subtração.
  */
 expressao
-    : expressao OU_LOG expressao
-    | expressao E_LOG expressao
-    | expressao OP_REL expressao
+    : expressao OU expressao
+    | expressao E expressao
+    | expressao RELOP expressao
     | expressao MAIS expressao
     | expressao MENOS expressao
     | expressao MULT expressao
@@ -133,9 +134,9 @@ expressao
     | expressao MOD expressao
     | NAO expressao
     | MENOS expressao %prec MENOS_UN
-    | A_PAR expressao F_PAR
+    | ABRE_PARENTESES expressao FECHA_PARENTESES
     | ID
-    | NUM
+    | NUMERO
     ;
 
 %%
@@ -145,9 +146,11 @@ expressao
 void yyerror(const char *mensagem) {
     houve_erro_sintatico = 1;
 
-
-    fprintf(stderr, "Erro sintático na linha %d, coluna %d, próximo a \"%s\": %s.\n", linha_token, coluna_token, yytext, mensagem);
-
+    if (yytext[0] == '\0') {
+        fprintf(stderr, "Erro sintático de fim de arquivo na linha %d, coluna %d: %s.\n", linha_token, coluna_token, mensagem);
+    } else {
+        fprintf(stderr, "Erro sintático na linha %d, coluna %d, próximo a \"%s\": %s.\n", linha_token, coluna_token, yytext, mensagem);
+    }
 }
 
 int main(int argc, char *argv[]) {
