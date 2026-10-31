@@ -58,12 +58,18 @@ item
 
 /* Declarações admitem um ou mais identificadores do mesmo tipo. */
 declaracao
-    : TIP lista_ids P_VIRG
+    : TIP lista_declaradores P_VIRG
     ;
 
-lista_ids
+lista_declaradores
+    : declarador
+    | lista_declaradores VIRG declarador
+    ;
+
+/* A inicialização na declaração é reconhecida somente sintaticamente. */
+declarador
     : ID
-    | lista_ids VIRG ID
+    | ID ATR expressao
     ;
 
 comando
