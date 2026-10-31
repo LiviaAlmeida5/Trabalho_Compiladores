@@ -87,13 +87,14 @@ atribuicao
     ;
 
 /*
- * Os ramos do if e o corpo do while são sempre blocos. Essa decisão de
- * sintaxe elimina a ambiguidade do else, pois cada else pertence ao if que
- * aparece imediatamente antes de seu bloco.
+ * Os ramos do if e o corpo do while são sempre blocos. O else pode iniciar
+ * outro if, permitindo encadeamentos else if. Essa decisão de sintaxe elimina
+ * a ambiguidade do else, pois cada else pertence ao if correspondente.
  */
 condicional
     : IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco
     | IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco ELSE bloco
+    | IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco ELSE condicional
     ;
 
 repeticao
