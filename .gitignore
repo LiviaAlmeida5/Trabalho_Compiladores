@@ -1,0 +1,10 @@
+# Arquivos gerados durante a compilação com Flex/Bison.
+lex.yy.c
+parser.tab.c
+parser.tab.h
+compilador
+lexer
+
+# Configurações e instruções locais do Codex.
+.codex/
+AGENTS.md
