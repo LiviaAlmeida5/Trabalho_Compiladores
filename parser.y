@@ -31,8 +31,8 @@ int houve_erro_sintatico = 0;
 %left MULT DIV MOD
 %right NAO MENOS_UN
 
-%define parse.error verbose
-%start programa
+// %define parse.error verbose // ver oq esse trem faz
+// %start programa
 
 %%
 
@@ -44,6 +44,11 @@ programa
 lista_itens
     : /* vazio */
     | lista_itens item
+    /* Recupera comandos e declarações até o próximo ponto e vírgula. */
+    | lista_itens error P_VIRG
+      {
+          yyerrok;
+      }
     ;
 
 item
@@ -99,6 +104,11 @@ leitura
 
 bloco
     : A_CH lista_itens F_CH
+    /* Em um bloco, também é possível sincronizar diretamente em '}'. */
+    | A_CH lista_itens error F_CH
+      {
+          yyerrok;
+      }
     ;
 
 /*
@@ -127,22 +137,11 @@ expressao
 /*-------------------------- Funções auxiliares --------------------------*/
 
 void yyerror(const char *mensagem) {
-    /* O erro léxico já foi descrito pelo Flex com sua posição. */
-    if (houve_erro_lexico) {
-        return;
-    }
-
     houve_erro_sintatico = 1;
 
-    if (feof(yyin)) {
-        fprintf(stderr,
-                "Erro sintático no fim do arquivo, linha %d, coluna %d: %s.\n",
-                linha_token, coluna_token, mensagem);
-    } else {
-        fprintf(stderr,
-                "Erro sintático na linha %d, coluna %d, próximo a \"%s\": %s.\n",
-                linha_token, coluna_token, yytext, mensagem);
-    }
+
+    fprintf(stderr, "Erro sintático na linha %d, coluna %d, próximo a \"%s\": %s.\n", linha_token, coluna_token, yytext, mensagem);
+
 }
 
 int main(int argc, char *argv[]) {
