@@ -15,7 +15,6 @@
 
 void coluna_comentario_multilinha();
 int inserir_tabela(char *lexema);
-void print_token(int numero_linha, int numero_coluna, char * lexema, char *token);
 
 typedef struct{
     char lexema[MAX_TAMANHO_ID + 1]; 
@@ -77,60 +76,53 @@ other .
 {comentario_uma_linha}          {   }
 
     /* Palavras reservadas e tipos da linguagem. */
-"if"            { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<IF>"); column_number += yyleng; return IF; } // IF
-"else"          { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<ELSE>"); column_number += yyleng; return ELSE; } // ELSE
-"while"         { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<WHILE>"); column_number += yyleng; return WHILE; } // WHILE
-"print"         { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<PRINT>"); column_number += yyleng; return PRINT; } // PRINT
-"read"          { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<READ>"); column_number += yyleng; return READ; } // READ
+"if"            { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return IF; } // IF
+"else"          { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return ELSE; } // ELSE
+"while"         { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return WHILE; } // WHILE
+"print"         { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return PRINT; } // PRINT
+"read"          { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return READ; } // READ
 
     /* Operadores aritméticos. */
-"+"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<MAIS>"); column_number += yyleng; return MAIS; } // MAIS
-"-"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<MENOS>"); column_number += yyleng; return MENOS; } // MENOS
-"*"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<MULT>"); column_number += yyleng; return MULT; } // MULT
-"/"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<DIV>"); column_number += yyleng; return DIV; } // DIV
-"%"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<MOD>"); column_number += yyleng; return MOD; } // MOD
+"+"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return MAIS; } // MAIS
+"-"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return MENOS; } // MENOS
+"*"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return MULT; } // MULT
+"/"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return DIV; } // DIV
+"%"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return MOD; } // MOD
 
     /* Operador de atribuição. */
-"="             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<ATRIBUICAO>"); column_number += yyleng; return ATRIBUICAO; } // ATRIBUICAO
+"="             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return ATRIBUICAO; } // ATRIBUICAO
  
     /* Operadores lógicos. */
-"&&"            { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<E>"); column_number += yyleng; return E; } // E
-"||"            { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<OU>"); column_number += yyleng; return OU; } // OU
-"!"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<NAO>"); column_number += yyleng; return NAO; } // NAO
+"&&"            { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return E; } // E
+"||"            { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return OU; } // OU
+"!"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return NAO; } // NAO
 
     /* Símbolos de pontuação. */
-";"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<PONTO_VIRGULA>"); column_number += yyleng; return PONTO_VIRGULA; } // PONTO_VIRGULA
-","             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<VIRGULA>"); column_number += yyleng; return VIRGULA; } // VIRGULA
-"("             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<ABRE_PARENTESES>"); column_number += yyleng; return ABRE_PARENTESES; } // ABRE_PARENTESES
-")"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<FECHA_PARENTESES>"); column_number += yyleng; return FECHA_PARENTESES; } // FECHA_PARENTESES
-"{"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<ABRE_CHAVES>"); column_number += yyleng; return ABRE_CHAVES; } // ABRE_CHAVES
-"}"             { linha_token = yylineno; coluna_token = column_number; print_token(yylineno, column_number, yytext, "<FECHA_CHAVES>"); column_number += yyleng; return FECHA_CHAVES; } // FECHA_CHAVES
+";"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return PONTO_VIRGULA; } // PONTO_VIRGULA
+","             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return VIRGULA; } // VIRGULA
+"("             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return ABRE_PARENTESES; } // ABRE_PARENTESES
+")"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return FECHA_PARENTESES; } // FECHA_PARENTESES
+"{"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return ABRE_CHAVES; } // ABRE_CHAVES
+"}"             { linha_token = yylineno; coluna_token = column_number; column_number += yyleng; return FECHA_CHAVES; } // FECHA_CHAVES
 
     /* Operadores relacionais.*/
 {relop}         {
-                    char token[50];
-
                     linha_token = yylineno;
                     coluna_token = column_number;
-                    snprintf(token, sizeof(token), "<RELOP, %s >", yytext); 
-                    print_token(yylineno, column_number, yytext, token); column_number += yyleng;
+                    column_number += yyleng;
                     return RELOP;
                 } // RELOP
 
     /* Tipos da linguagem.*/
 {tipo}          {
-                    char token[50];
-
                     linha_token = yylineno;
                     coluna_token = column_number;
-                    snprintf(token, sizeof(token), "<TIPO, %s>", yytext); 
-                    print_token(yylineno, column_number, yytext, token); column_number += yyleng;
+                    column_number += yyleng;
                     return TIPO;
                 } // TIPÓ
 
 {id}            {
                     int valor_token_id = inserir_tabela(yytext);
-                    char token[50];
 
                     linha_token = yylineno;
                     coluna_token = column_number;
@@ -147,20 +139,12 @@ other .
                         column_number += yyleng;
                         return ERRO_LEX;
                     }
-                    else {
-                        snprintf(token, sizeof(token), "<ID, %d>", valor_token_id);
-                        print_token(yylineno, column_number, yytext, token);
-                    }
                     column_number += yyleng;
                     return ID;
                 } // ID             
 {number}        {
-                    char token[50];
-
                     linha_token = yylineno;
                     coluna_token = column_number;
-                    snprintf(token, sizeof(token), "<NUMERO, %s>", yytext);
-                    print_token(yylineno, column_number, yytext, token);
                     column_number += yyleng;
                     return NUMERO;
                 } // NUMERO
@@ -194,11 +178,6 @@ void coluna_comentario_multilinha(){
             column_number++;
         }
     }
-}
-
-void print_token(int numero_linha, int numero_coluna, char * lexema, char *token) {
-    /* Centraliza o formato de saída exigido para os tokens. */
-    fprintf(yyout, "Linha: %d; Coluna: %d; Lexema: %s; Token: %s\n", numero_linha, numero_coluna, lexema, token);
 }
 
 int inserir_tabela(char *lexema){

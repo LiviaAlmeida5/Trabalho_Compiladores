@@ -20,7 +20,7 @@ bison -d -o parser.tab.c parser.y
 flex -o lex.yy.c lexer.l
 
 # Compila e integra os dois analisadores.
-gcc -Wall -Wextra parser.tab.c lex.yy.c -o compilador -lfl
+gcc parser.tab.c lex.yy.c -o compilador -lfl
 
 # O analisador gerado abre o arquivo recebido como argumento.
 ./compilador "$ARQUIVO"
