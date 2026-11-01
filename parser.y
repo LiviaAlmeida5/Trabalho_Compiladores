@@ -5,6 +5,7 @@
 int yylex(void);
 void yyerror(const char *mensagem);
 
+/* Variáveis e funções externas presentes em lexer.l */
 extern FILE *yyin;
 extern char *yytext;
 extern int linha_token;
@@ -12,6 +13,7 @@ extern int coluna_token;
 extern int houve_erro_lexico;
 extern void imprimir_tabela_simbolos(void);
 
+/* Variável auxiliar para indicar se houve pelo menos um erro sintático */
 int houve_erro_sintatico = 0;
 %}
 
@@ -32,12 +34,8 @@ int houve_erro_sintatico = 0;
 %left MULT DIV MOD
 %right NAO MENOS_UN
 
-// %define parse.error verbose // ver oq esse trem faz
-// %start programa
-
 %%
 
-/* Um programa é uma sequência, possivelmente vazia, de itens. */
 programa
     : lista_itens
     ;
@@ -57,7 +55,7 @@ item
     | comando
     ;
 
-/* Declarações admitem um ou mais identificadores do mesmo tipo. */
+/* Declarações */
 declaracao
     : TIPO lista_declaradores PONTO_VIRGULA
     ;
@@ -67,12 +65,12 @@ lista_declaradores
     | lista_declaradores VIRGULA declarador
     ;
 
-/* A inicialização na declaração é reconhecida somente sintaticamente. */
 declarador
     : ID
     | ID ATRIBUICAO expressao
     ;
 
+/* Comandos */
 comando
     : atribuicao
     | condicional
@@ -86,11 +84,6 @@ atribuicao
     : ID ATRIBUICAO expressao PONTO_VIRGULA
     ;
 
-/*
- * Os ramos do if e o corpo do while são sempre blocos. O else pode iniciar
- * outro if, permitindo encadeamentos else if. Essa decisão de sintaxe elimina
- * a ambiguidade do else, pois cada else pertence ao if correspondente.
- */
 condicional
     : IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco
     | IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco ELSE bloco
@@ -101,7 +94,6 @@ repeticao
     : WHILE ABRE_PARENTESES expressao FECHA_PARENTESES bloco
     ;
 
-/* print e read são as funções predefinidas de saída e entrada. */
 impressao
     : PRINT ABRE_PARENTESES expressao FECHA_PARENTESES PONTO_VIRGULA
     ;
@@ -112,17 +104,17 @@ leitura
 
 bloco
     : ABRE_CHAVES lista_itens FECHA_CHAVES
-    /* Em um bloco, também é possível sincronizar diretamente em '}'. */
+    /* Recupera comandos e declarações até o próximo fecha chaves (fim de um bloco). */
     | ABRE_CHAVES lista_itens error FECHA_CHAVES
       {
           yyerrok;
       }
     ;
 
-/*
- * A gramática abaixo reconhece expressões aritméticas, relacionais e
- * lógicas. As declarações de precedência acima resolvem as ambiguidades;
- * MENOS_UN distingue o sinal negativo da subtração.
+ /*
+ * Expressão
+ * As declarações de precedência na linha 28 resolvem as ambiguidades.
+ * MENOS_UN distingue quando MENOS representa sinal de negativo ao invés da subtração de duas expressões.
  */
 expressao
     : expressao OU expressao
@@ -147,6 +139,7 @@ expressao
 void yyerror(const char *mensagem) {
     houve_erro_sintatico = 1;
 
+    /* Tratamento para caso o simbolo inesperado seja o final do arquivo */
     if (yytext[0] == '\0') {
         fprintf(stderr, "Erro sintático de fim de arquivo na linha %d, coluna %d: %s.\n", linha_token, coluna_token, mensagem);
     } else {
@@ -175,6 +168,9 @@ int main(int argc, char *argv[]) {
 
     if (resultado == 0 && !houve_erro_lexico && !houve_erro_sintatico) {
         printf("Análise sintática concluída com sucesso.\n");
+        return 0;
+    } else {
+        printf("Análise concluída com erros.\n");
         return 0;
     }
 
