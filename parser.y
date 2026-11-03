@@ -34,6 +34,13 @@ int houve_erro_sintatico = 0;
 %left MULT DIV MOD
 %right NAO MENOS_UN
 
+/*
+ * Resolve o "dangling else": o if sem else tem precedencia menor que ELSE,
+ * portanto cada else e associado ao if aberto mais proximo.
+ */
+%nonassoc IFX
+%nonassoc ELSE
+
 %%
 
 programa
@@ -85,13 +92,12 @@ atribuicao
     ;
 
 condicional
-    : IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco
-    | IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco ELSE bloco
-    | IF ABRE_PARENTESES expressao FECHA_PARENTESES bloco ELSE condicional
+    : IF ABRE_PARENTESES expressao FECHA_PARENTESES item %prec IFX
+    | IF ABRE_PARENTESES expressao FECHA_PARENTESES item ELSE item
     ;
 
 repeticao
-    : WHILE ABRE_PARENTESES expressao FECHA_PARENTESES bloco
+    : WHILE ABRE_PARENTESES expressao FECHA_PARENTESES item
     ;
 
 impressao

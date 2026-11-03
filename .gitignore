@@ -8,3 +8,5 @@ lexer
 # Configurações e instruções locais do Codex.
 .codex/
 AGENTS.md
+testes/
+testes.zip

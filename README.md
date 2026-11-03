@@ -10,5 +10,6 @@ Comando para executar:
 ./compiler.sh programa.txt
 ```
 
-Na sintaxe adotada, os corpos de `if`, `else` e `while` são delimitados
-obrigatoriamente por chaves.
+Os corpos de `if`, `else` e `while` podem ser um único item ou um bloco delimitado
+por chaves. Em condicionais aninhadas sem chaves, o `else` é associado ao `if`
+aberto mais próximo.

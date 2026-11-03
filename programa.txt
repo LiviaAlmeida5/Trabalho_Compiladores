@@ -1,4 +1,4 @@
-int a;
+int a = 1;
 float b;
 
 read(a);
@@ -7,7 +7,7 @@ read(b);
 if (a >= 18) {
     print(a);
     print(b);
-} else {
+} else if (a){
     print(a);
 }
 
@@ -16,3 +16,13 @@ while (a > 0) {
     print(a);
     a = a - 1;
 }
+
+print(a);
+
+int a = 1, b, c = a + 2;
+
+if (a >= 18)
+    print(a);
+
+while(a)
+    read(a);
