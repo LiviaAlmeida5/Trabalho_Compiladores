@@ -22,7 +22,12 @@ print(a);
 int a = 1, b, c = a + 2;
 
 if (a >= 18)
-    print(a);
+    if(a <= 12)
+    a = 1;
+    else 
+    a = 2;
+    else
+    a = 3;
 
 while(a)
     read(a);

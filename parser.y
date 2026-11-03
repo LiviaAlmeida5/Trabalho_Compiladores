@@ -34,10 +34,7 @@ int houve_erro_sintatico = 0;
 %left MULT DIV MOD
 %right NAO MENOS_UN
 
-/*
- * Resolve o "dangling else": o if sem else tem precedencia menor que ELSE,
- * portanto cada else e associado ao if aberto mais proximo.
- */
+/* Resolve ambiguidade na condicional sem blocos */
 %nonassoc IFX
 %nonassoc ELSE
 
