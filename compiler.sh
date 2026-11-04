@@ -1,24 +1,26 @@
 #!/bin/bash
 
-# Verifica se foi informado um arquivo
-if [ $# -ne 1 ]; then
-    echo "Uso: $0 <arquivo-fonte>"
+# Interrompe a execução se alguma etapa de geração ou compilação falhar.
+set -e
+
+if [ "$#" -ne 1 ]; then
+    echo "Uso: $0 <arquivo-fonte>" >&2
     exit 1
 fi
 
 ARQUIVO="$1"
 
-# Verifica se o arquivo existe
 if [ ! -f "$ARQUIVO" ]; then
-    echo "Erro: arquivo '$ARQUIVO' não encontrado."
+    echo "Erro: arquivo '$ARQUIVO' não encontrado." >&2
     exit 1
 fi
 
-# Gera o analisador léxico
-flex lexer.l
+# O cabeçalho gerado pelo Bison contém os tokens usados pelo Flex.
+bison -d -o parser.tab.c parser.y
+flex -o lex.yy.c lexer.l
 
-# Compila o código gerado
-gcc lex.yy.c -o lexer -lfl
+# Compila e integra os dois analisadores.
+gcc parser.tab.c lex.yy.c -o compilador -lfl
 
-# Executa o analisador usando o arquivo fornecido
-./lexer < "$ARQUIVO"
+# O analisador gerado abre o arquivo recebido como argumento.
+./compilador "$ARQUIVO"
